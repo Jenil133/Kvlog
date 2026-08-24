@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": { "major": 3, "minor": 20, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "asan",
+      "displayName": "AddressSanitizer + UndefinedBehaviorSanitizer",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "KVLOG_SANITIZER": "address" }
+    },
+    {
+      "name": "tsan",
+      "displayName": "ThreadSanitizer",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "KVLOG_SANITIZER": "thread" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug", "configurePreset": "debug", "jobs": 4 },
+    { "name": "release", "configurePreset": "release", "jobs": 4 },
+    { "name": "asan", "configurePreset": "asan", "jobs": 4 },
+    { "name": "tsan", "configurePreset": "tsan", "jobs": 4 }
+  ],
+  "testPresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error", "jobs": 4 }
+    },
+    {
+      "name": "fast",
+      "hidden": true,
+      "inherits": "base",
+      "filter": { "exclude": { "label": "stress" } }
+    },
+    {
+      "name": "stress",
+      "hidden": true,
+      "inherits": "base",
+      "filter": { "include": { "label": "stress" } }
+    },
+    { "name": "debug", "inherits": "fast", "configurePreset": "debug" },
+    { "name": "release", "inherits": "fast", "configurePreset": "release" },
+    { "name": "asan", "inherits": "fast", "configurePreset": "asan" },
+    { "name": "tsan", "inherits": "fast", "configurePreset": "tsan" },
+    { "name": "debug-stress", "inherits": "stress", "configurePreset": "debug" },
+    { "name": "release-stress", "inherits": "stress", "configurePreset": "release" },
+    { "name": "asan-stress", "inherits": "stress", "configurePreset": "asan" },
+    { "name": "tsan-stress", "inherits": "stress", "configurePreset": "tsan" }
+  ]
+}

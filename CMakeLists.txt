@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(kvlog VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(KVLOG_SANITIZER "" CACHE STRING "Sanitizer build: empty, 'address' (ASan + UBSan) or 'thread' (TSan)")
+set_property(CACHE KVLOG_SANITIZER PROPERTY STRINGS "" address thread)
+
+find_package(Threads REQUIRED)
+
+# Sanitizers must instrument every object in the process (TSan reports false
+# races otherwise), so they are applied globally, including to GoogleTest.
+if(KVLOG_SANITIZER STREQUAL "address")
+  add_compile_options(-fsanitize=address,undefined -fno-sanitize-recover=undefined
+                      -fno-omit-frame-pointer -O1)
+  add_link_options(-fsanitize=address,undefined)
+elseif(KVLOG_SANITIZER STREQUAL "thread")
+  add_compile_options(-fsanitize=thread -fno-omit-frame-pointer -O1)
+  add_link_options(-fsanitize=thread)
+elseif(NOT KVLOG_SANITIZER STREQUAL "")
+  message(FATAL_ERROR "Unknown KVLOG_SANITIZER '${KVLOG_SANITIZER}'")
+endif()
+
+# Warning flags apply to kvlog's own targets only, never to fetched code.
+add_library(kvlog_warnings INTERFACE)
+target_compile_options(kvlog_warnings INTERFACE -Wall -Wextra -Wpedantic)
+
+add_library(kvlog STATIC
+  src/table/iterator.cc
+  src/util/status.cc
+)
+target_include_directories(kvlog
+  PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(kvlog PUBLIC Threads::Threads PRIVATE kvlog_warnings)
