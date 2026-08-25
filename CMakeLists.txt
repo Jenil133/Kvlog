@@ -36,8 +36,11 @@ add_library(kvlog STATIC
   src/db/log_writer.cc
   src/db/memtable.cc
   src/db/write_batch.cc
+  src/table/filter_block.cc
   src/table/iterator.cc
   src/util/arena.cc
+  src/util/bloom.cc
+  src/util/cache.cc
   src/util/coding.cc
   src/util/comparator.cc
   src/util/crc32c.cc
