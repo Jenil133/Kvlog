@@ -34,6 +34,7 @@ set(KVLOG_TEST_SOURCES
   crc32c_test.cc
   dbformat_test.cc
   hash_test.cc
+  log_test.cc
   memtable_test.cc
   skiplist_test.cc
   write_batch_test.cc
