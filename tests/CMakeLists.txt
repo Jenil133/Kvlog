@@ -32,7 +32,11 @@ set(KVLOG_TEST_SOURCES
   arena_test.cc
   coding_test.cc
   crc32c_test.cc
+  dbformat_test.cc
   hash_test.cc
+  memtable_test.cc
+  skiplist_test.cc
+  write_batch_test.cc
 )
 
 add_executable(kvlog_tests ${KVLOG_TEST_SOURCES})

@@ -31,6 +31,9 @@ add_library(kvlog_warnings INTERFACE)
 target_compile_options(kvlog_warnings INTERFACE -Wall -Wextra -Wpedantic)
 
 add_library(kvlog STATIC
+  src/db/dbformat.cc
+  src/db/memtable.cc
+  src/db/write_batch.cc
   src/table/iterator.cc
   src/util/arena.cc
   src/util/coding.cc
