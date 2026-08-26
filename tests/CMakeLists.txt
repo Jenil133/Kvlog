@@ -36,6 +36,7 @@ set(KVLOG_TEST_SOURCES
   dbformat_test.cc
   filter_block_test.cc
   hash_test.cc
+  iterator_test.cc
   log_test.cc
   memtable_test.cc
   skiplist_test.cc
