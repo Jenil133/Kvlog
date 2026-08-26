@@ -33,6 +33,7 @@ set(KVLOG_TEST_SOURCES
   bloom_test.cc
   cache_test.cc
   coding_test.cc
+  compaction_test.cc
   concurrency_test.cc
   crc32c_test.cc
   db_test.cc
@@ -44,6 +45,7 @@ set(KVLOG_TEST_SOURCES
   log_test.cc
   memtable_test.cc
   skiplist_test.cc
+  space_amp_test.cc
   table_test.cc
   version_set_test.cc
   write_batch_test.cc
