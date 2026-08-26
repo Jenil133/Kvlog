@@ -33,6 +33,7 @@ target_compile_options(kvlog_warnings INTERFACE -Wall -Wextra -Wpedantic)
 add_library(kvlog STATIC
   src/db/builder.cc
   src/db/compaction.cc
+  src/db/db_impl.cc
   src/db/db_iter.cc
   src/db/dbformat.cc
   src/db/filename.cc

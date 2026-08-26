@@ -31,8 +31,11 @@ target_link_libraries(kvlog_test_util PUBLIC kvlog GTest::gtest PRIVATE kvlog_wa
 set(KVLOG_TEST_SOURCES
   arena_test.cc
   bloom_test.cc
+  cache_test.cc
   coding_test.cc
+  concurrency_test.cc
   crc32c_test.cc
+  db_test.cc
   dbformat_test.cc
   filename_test.cc
   filter_block_test.cc
@@ -41,6 +44,7 @@ set(KVLOG_TEST_SOURCES
   log_test.cc
   memtable_test.cc
   skiplist_test.cc
+  table_test.cc
   version_set_test.cc
   write_batch_test.cc
 )
