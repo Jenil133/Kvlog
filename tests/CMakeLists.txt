@@ -34,12 +34,14 @@ set(KVLOG_TEST_SOURCES
   coding_test.cc
   crc32c_test.cc
   dbformat_test.cc
+  filename_test.cc
   filter_block_test.cc
   hash_test.cc
   iterator_test.cc
   log_test.cc
   memtable_test.cc
   skiplist_test.cc
+  version_set_test.cc
   write_batch_test.cc
 )
 
