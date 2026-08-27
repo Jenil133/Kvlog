@@ -8,6 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(KVLOG_BUILD_TESTS "Build the GoogleTest suites" ON)
+option(KVLOG_BUILD_TOOLS "Build the command-line tools" ON)
 set(KVLOG_SANITIZER "" CACHE STRING "Sanitizer build: empty, 'address' (ASan + UBSan) or 'thread' (TSan)")
 set_property(CACHE KVLOG_SANITIZER PROPERTY STRINGS "" address thread)
 
@@ -68,6 +69,15 @@ target_include_directories(kvlog
   PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(kvlog PUBLIC Threads::Threads PRIVATE kvlog_warnings)
+
+if(KVLOG_BUILD_TOOLS)
+  add_library(kvlog_cli_lib STATIC tools/cli.cc)
+  target_include_directories(kvlog_cli_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/tools)
+  target_link_libraries(kvlog_cli_lib PUBLIC kvlog PRIVATE kvlog_warnings)
+
+  add_executable(kvlog_cli tools/kvlog_cli.cc)
+  target_link_libraries(kvlog_cli PRIVATE kvlog_cli_lib kvlog_warnings)
+endif()
 
 if(KVLOG_BUILD_TESTS)
   enable_testing()

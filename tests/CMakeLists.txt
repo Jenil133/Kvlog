@@ -60,11 +60,18 @@ set(KVLOG_TEST_SOURCES
   write_batch_test.cc
 )
 
+if(TARGET kvlog_cli_lib)
+  list(APPEND KVLOG_TEST_SOURCES cli_test.cc)
+endif()
+
 add_executable(kvlog_tests ${KVLOG_TEST_SOURCES})
 target_link_libraries(kvlog_tests PRIVATE kvlog_test_util GTest::gtest_main kvlog_warnings)
 target_compile_definitions(kvlog_tests PRIVATE
   KVLOG_CRASH_HELPER_PATH="$<TARGET_FILE:kvlog_crash_helper>")
 add_dependencies(kvlog_tests kvlog_crash_helper)
+if(TARGET kvlog_cli_lib)
+  target_link_libraries(kvlog_tests PRIVATE kvlog_cli_lib)
+endif()
 gtest_discover_tests(kvlog_tests
   DISCOVERY_MODE PRE_TEST
   PROPERTIES TIMEOUT 300)
