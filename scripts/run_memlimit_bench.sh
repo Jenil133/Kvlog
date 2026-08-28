@@ -2,7 +2,8 @@
 # Grows a kvlog database well past the memory available to it and records
 # mixed read/write throughput at each step, once per block-cache size.
 #
-# Builds the release configuration inside the everpure-dev Docker image,
+# Builds the release configuration inside the kvlog-dev Docker image
+# (docker build -t kvlog-dev docker/),
 # then runs kvlog_bench --growth=1 in a container whose cgroup memory limit
 # is MEMORY. The page cache is charged to that cgroup too, so once the
 # dataset outgrows the limit, reads that miss the block cache go to disk.
@@ -23,11 +24,11 @@
 #   VALUE_SIZE    bytes per value                               [1000]
 #   CACHE_SIZES   block-cache capacities to compare, in bytes   ["8388608 134217728"]
 #   OUT_DIR       CSV directory, relative to the project        [bench/results]
-#   IMAGE         Docker image                                  [everpure-dev:latest]
+#   IMAGE         Docker image                                  [kvlog-dev:latest]
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-IMAGE="${IMAGE:-everpure-dev:latest}"
+IMAGE="${IMAGE:-kvlog-dev:latest}"
 MEMORY="${MEMORY:-512m}"
 CPUS="${CPUS:-2}"
 MAX_BYTES="${MAX_BYTES:-4294967296}"
@@ -50,7 +51,10 @@ if [[ "${SMOKE:-0}" == "1" ]]; then
   TAG="smoke-"
 fi
 
-docker image inspect "$IMAGE" >/dev/null
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+  echo "Docker image $IMAGE not found; build it with: docker build -t kvlog-dev docker/" >&2
+  exit 1
+fi
 
 mount=(--mount "type=bind,source=${PROJECT_DIR},target=/src")
 

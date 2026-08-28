@@ -311,13 +311,13 @@ manual compaction, at appends 1 to 10). Most rounds use `NoSyncEnv`, whose
 syncs hand data to the OS without forcing it to the device: identical for a
 process crash, and far faster than `F_FULLFSYNC` on macOS.
 
-Measured after the phase 2+3 review fixes (each a fresh build; the counts vary
-with timing, but the settled rounds make "finished a compaction" certain): the
-compaction crash loop printed `120 kills, 141955 acknowledged ops verified;
-helpers finished 958 flushes and 451 compactions (115 rounds compacted); 104
-kills interrupted a table write` (macOS `debug`), and 462 compactions (`asan`),
-470 (`tsan`), 461 (Linux g++ 13.3) and 544 (Linux clang 18 ASan) in the same
-loop. `KillsInsideManualCompactionsLoseNothing` reports 30 of 30 kills inside
+Measured on fresh builds (the counts vary with timing, but the settled rounds
+make "finished a compaction" certain): one run of the compaction crash loop
+printed `120 kills, 141955 acknowledged ops verified; helpers finished 958
+flushes and 451 compactions (115 rounds compacted); 104 kills interrupted a
+table write`. Across the macOS `debug`, `asan` and `tsan` builds and the Linux
+g++ 13.3 and clang 18 (ASan) builds, the same loop finished between 451 and
+544 compactions. `KillsInsideManualCompactionsLoseNothing` reports 30 of 30 kills inside
 the compaction by construction.
 
 ## Compaction
@@ -444,7 +444,7 @@ live data), `write_buffer_size` 32 KiB, `target_file_size` 32 KiB,
 bytes = all `.sst` plus `.log` files, measured after `WaitForBackgroundWork()`
 at each quarter of the workload. Command:
 `build/debug/tests/kvlog_tests --gtest_filter='SpaceAmpTest.*'`
-(macOS arm64, Apple clang 21, `debug` preset, `NoSyncEnv`; integration run of 2026-10-08):
+(macOS arm64, Apple clang 21, `debug` preset, `NoSyncEnv`):
 
     with compaction: live 245795 B, written 4899223 B (19.9x live), on disk at each quarter: 320791 B (1.31x) 347924 B (1.42x) 378760 B (1.54x) 406109 B (1.65x)
     without compaction: live 245795 B, written 4899223 B (19.9x live), on disk at each quarter: 1366056 B (5.56x) 2732028 B (11.12x) 4096791 B (16.67x) 5457155 B (22.20x)
@@ -453,6 +453,7 @@ at each quarter of the workload. Command:
 The "without compaction" numbers do not depend on timing. With compaction they
 depend on how the background thread's work interleaved with the writes; an
 earlier run of the same test (before the write-buffer accounting fix in "Write
-buffer and open files") printed 1.24x 1.31x 1.36x 1.48x. The test asserts
+buffer and open files") printed 1.24x 1.31x 1.36x 1.48x, and ten further runs of the `release` build
+stayed between 1.22x and 1.71x at every checkpoint. The test asserts
 <= 3x at every checkpoint with compaction, and strictly growing, > 10x live at
 the end, without it.

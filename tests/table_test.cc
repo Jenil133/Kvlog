@@ -642,7 +642,7 @@ TEST_F(TableTest, FilterSkipsMissingKeysWithoutReadingBlocks) {
 }
 
 TEST_F(TableTest, TablesWithoutAFilterAreReadNormally) {
-  // Written without a filter (as every phase 1 table was) and read by a
+  // Written without a filter (as tables were before filters existed) and read by a
   // reader configured to build filters: nothing is skipped or counted.
   options_.bloom_bits_per_key = 0;
   const std::vector<Entry> entries = EvenKeys(500);

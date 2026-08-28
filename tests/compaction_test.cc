@@ -652,7 +652,7 @@ TEST_F(CompactionTest, CompactionOutputIsSplitAtTargetFileSize) {
   EXPECT_EQ(400u, Scan().size());
 }
 
-// The phase 2 and 3 read features working on compaction outputs: every
+// The read-path features working on compaction outputs: every
 // table a compaction writes carries a Bloom filter, so missing keys rarely
 // read a data block; point lookups fill the block cache, so repeated reads
 // stop touching the files; and kvlog.stats reports all of it.
