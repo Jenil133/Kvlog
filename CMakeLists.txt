@@ -9,6 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(KVLOG_BUILD_TESTS "Build the GoogleTest suites" ON)
 option(KVLOG_BUILD_TOOLS "Build the command-line tools" ON)
+option(KVLOG_BUILD_BENCH "Build the kvlog_bench benchmark" ON)
 set(KVLOG_SANITIZER "" CACHE STRING "Sanitizer build: empty, 'address' (ASan + UBSan) or 'thread' (TSan)")
 set_property(CACHE KVLOG_SANITIZER PROPERTY STRINGS "" address thread)
 
@@ -82,4 +83,9 @@ endif()
 if(KVLOG_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
+endif()
+
+# After tests/, so the benchmark's own tests can use the fetched GoogleTest.
+if(KVLOG_BUILD_BENCH)
+  add_subdirectory(bench)
 endif()
